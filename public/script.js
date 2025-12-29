@@ -1,42 +1,46 @@
 async function gradeTest() {
     let responses = {};
-
-    // Collect all answers from q1 to q23
     for (let i = 1; i <= 23; i++) {
         const el = document.getElementById("q" + i);
-        if (el) {
-            responses["q" + i] = el.value;
-        }
+        if (el) responses["q" + i] = el.value;
     }
 
     const resultDiv = document.getElementById("result");
-    resultDiv.innerText = "Marking in progress... Please wait.";
+    resultDiv.innerHTML = "<p style='color: blue;'>Grading in progress... Please wait.</p>";
 
     try {
-        // Use relative path so it works on both localhost and deployed environments
         const res = await fetch("/mark", {
             method: "POST",
-            headers: { 
-                "Content-Type": "application/json" 
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ answers: responses })
         });
 
-        if (!res.ok) throw new Error("Server error during marking");
-
         const data = await res.json();
-
-        // Store results for use in other pages (like tutor.html)
+        
+        // Save to local storage for the tutor page if needed
         localStorage.setItem("aiResults", JSON.stringify(data));
 
-        // Display results to user
+        // WhatsApp Setup
+        const tutorNumber = "254716619442";
+        const message = `Hi, I have completed my Heart Biology Test. I scored ${data.totalScore}/50. A full report has been sent to your email!`;
+        const waLink = `https://wa.me/${tutorNumber}?text=${encodeURIComponent(message)}`;
+
         resultDiv.innerHTML = `
-            <strong>Your total score is: ${data.totalScore} / 50 marks</strong><br>
-            <p><em>Teacher's Feedback:</em> ${data.feedback}</p>
+            <div style="padding: 20px; border: 2px solid green; border-radius: 10px; text-align: center;">
+                <h2 style="margin: 0;">Submission Successful!</h2>
+                <h1 style="color: #2c3e50;">Score: ${data.totalScore} / 50</h1>
+                <p><em>"${data.feedback}"</em></p>
+                <hr>
+                <p>The full breakdown has been automatically emailed to the tutor.</p>
+                <a href="${waLink}" target="_blank" 
+                   style="display: inline-block; background-color: #25D366; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 10px;">
+                   Click to Notify Tutor on WhatsApp
+                </a>
+            </div>
         `;
 
     } catch (error) {
         console.error("Error:", error);
-        resultDiv.innerText = "Error: Could not connect to the marking server.";
+        resultDiv.innerHTML = "<p style='color: red;'>Connection Error. Please try again.</p>";
     }
 }
