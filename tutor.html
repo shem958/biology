@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor Access</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h2>Tutor Login</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="tutorLogin()">Login</button>
+
+    <div id="tutorPanel" style="display:none;">
+        <h3>Student Answers</h3>
+        <div id="studentAnswers"></div>
+
+        <h3>Marking Scheme (Key Points)</h3>
+        <ul>
+            <li>CO₂ transport: buffering pH, increased carrying capacity</li>
+            <li>Cold: many strains; Measles: lifelong immunity</li>
+            <li>Blood A + B → agglutination & haemolysis</li>
+            <li>AB donors: A, B, AB, O (no antibodies)</li>
+            <li>Veins: valves</li>
+            <li>Defect: atherosclerosis / stroke / heart attack</li>
+            <li>Capillaries: thin walls, narrow lumen, slow flow, large surface</li>
+            <li>Low blood volume: transfusion / saline</li>
+            <li>Carboxyhaemoglobin: blocks oxygen transport</li>
+            <li>Pulmonary arteriole: low O₂, high CO₂; venule opposite</li>
+        </ul>
+
+        <h3>Total Score</h3>
+        <p id="totalScore"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+/* Reset & base styling */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 40px 15px;
+    color: #333;
+}
+
+/* Main container feel */
+form,
+#tutorPanel {
+    background: #ffffff;
+    max-width: 850px;
+    margin: auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Headings */
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+h3 {
+    margin-top: 30px;
+    color: #34495e;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-top: 20px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Inputs */
+textarea,
+input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+/* Focus effect */
+textarea:focus,
+input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+/* Button */
+button {
+    margin-top: 30px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    background: #3498db;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Result text */
+#result {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 25px;
+    color: #27ae60;
+}
+
+/* Tutor answers */
+#studentAnswers p {
+    background: #f8f9fa;
+    padding: 10px;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+
+    form,
+    #tutorPanel {
+        padding: 20px;
+    }
+}
