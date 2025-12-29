@@ -1,26 +1,27 @@
 const tutorPassword = "bio123"; // CHANGE THIS
 
-const markingScheme = {
-  q6: ["valves"],
-  q7: ["atherosclerosis", "stroke", "heart attack"],
-  q10: ["blood clotting", "coagulation"],
-  q15: ["capillaries"],
-  q18: ["right atrium"]
+// Auto-marked short-answer questions
+const autoMarking = {
+  q9: ["capillaries"],
+  q13: ["valves"],
+  q19: ["atherosclerosis", "heart attack", "stroke"],
+  q21: ["blood clotting", "coagulation"]
 };
 
 function gradeTest() {
   let score = 0;
   let responses = {};
 
-  for (let i = 1; i <= 18; i++) {
-    let id = "q" + i;
-    let el = document.getElementById(id);
-    if (el) responses[id] = el.value.toLowerCase();
+  for (let i = 1; i <= 24; i++) {
+    const el = document.getElementById("q" + i);
+    if (el) {
+      responses["q" + i] = el.value.toLowerCase().trim();
+    }
   }
 
-  // Auto-mark short answers
-  for (let q in markingScheme) {
-    if (markingScheme[q].some(ans => responses[q]?.includes(ans))) {
+  // Auto grading (simple keywords)
+  for (let q in autoMarking) {
+    if (autoMarking[q].some(ans => responses[q]?.includes(ans))) {
       score += 1;
     }
   }
@@ -33,18 +34,21 @@ function gradeTest() {
 }
 
 function tutorLogin() {
-  if (document.getElementById("password").value === tutorPassword) {
+  const pass = document.getElementById("password").value;
+
+  if (pass === tutorPassword) {
     document.getElementById("tutorPanel").style.display = "block";
 
-    let answers = JSON.parse(localStorage.getItem("studentAnswers"));
-    let display = "";
+    const answers = JSON.parse(localStorage.getItem("studentAnswers")) || {};
+    let output = "";
+
     for (let q in answers) {
-      display += `<p><strong>${q}:</strong> ${answers[q]}</p>`;
+      output += `<p><strong>${q.toUpperCase()}:</strong> ${answers[q]}</p>`;
     }
 
-    document.getElementById("studentAnswers").innerHTML = display;
+    document.getElementById("studentAnswers").innerHTML = output;
     document.getElementById("totalScore").innerText =
-      localStorage.getItem("score");
+      localStorage.getItem("score") + " marks";
   } else {
     alert("Incorrect password");
   }
