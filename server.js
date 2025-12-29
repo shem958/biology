@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import OpenAI from "openai";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import nodemailer from 'nodemailer';
+
 
 // Setup __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +27,17 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
+// EMAIL CONFIGURATION
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, 
+    pass: process.env.EMAIL_PASS  
+  }
+});
+
+
+
 app.post("/mark", async (req, res) => {
   try {
     const { answers } = req.body;
@@ -38,33 +51,54 @@ app.post("/mark", async (req, res) => {
       Questions and student answers:
       ${JSON.stringify(answers, null, 2)}
 
-      Return ONLY valid JSON:
+      Grade fairly out of 50 marks.
+      Return ONLY a JSON object with this exact structure:
       {
         "totalScore": number,
-        "breakdown": {
-          "q1": score,
-          "q2": score
-        },
-        "feedback": "short teacher comment"
+        "feedback": "Teacher's overall comment",
+        "detailedReport": "A string formatted with newlines showing each question, student answer, and the correct answer if they were wrong."
       }
     `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini", // FIX: Changed from gpt-4.1-mini (which doesn't exist)
+      model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }]
     });
 
-    let content = response.choices[0].message.content;
-    
-    // Safety check: Remove markdown code blocks if the AI accidentally includes them
-    const cleanJson = content.replace(/```json|```/g, "").trim();
-    
-    res.json(JSON.parse(cleanJson));
+    const aiResult = JSON.parse(response.choices[0].message.content.replace(/```json|```/g, "").trim());
+
+    // AUTOMATIC EMAIL TO TUTOR (mercynjenga366@gmail.com)
+    const mailOptions = {
+      from: `"Heart Test Bot" <${process.env.EMAIL_USER}>`,
+      to: 'mercynjenga366@gmail.com',
+      subject: `TEST SUBMISSION: Score ${aiResult.totalScore}/50`,
+      text: `
+        TEST REPORT - MAMMALIAN HEART
+        -----------------------------
+        Total Score: ${aiResult.totalScore} / 50
+        
+        Teacher Feedback:
+        ${aiResult.feedback}
+        
+        Detailed Breakdown:
+        ${aiResult.detailedReport}
+      `
+    };
+
+    // Send email in background
+    transporter.sendMail(mailOptions).catch(err => console.error("Auto-mail failed:", err));
+
+    // Send result back to student
+    res.json(aiResult);
+
   } catch (error) {
-    console.error("Marking error:", error);
-    res.status(500).json({ error: "Failed to mark the test." });
+    console.error(error);
+    res.status(500).json({ error: "Grading failed." });
   }
 });
+
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
